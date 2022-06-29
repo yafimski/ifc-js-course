@@ -1,16 +1,16 @@
+    "watch": "rollup -c -w"
+  "description": "Private repo for IFC.js course material/exercises and submittions",
 {
   "name": "ifc-js-course",
-  "description": "Private repo for IFC.js course material/exercises and submittions",
   "version": "1.0.0",
   "main": "index.js",
   "devDependencies": {},
   "scripts": {
     "build": "rollup -c",
-    "watch": "rollup -c -w"
   },
-  "repository": {
     "type": "git",
     "url": "git+https://github.com/yafimski/ifc-js-course.git"
+  "repository": {
   },
   "keywords": [],
   "author": "",
