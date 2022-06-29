@@ -1,0 +1,20 @@
+{
+  "name": "ifc-js-course",
+  "version": "1.0.0",
+  "description": "Private repo for IFC.js course material/exercises and submittions",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yafimski/ifc-js-course.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/yafimski/ifc-js-course/issues"
+  },
+  "homepage": "https://github.com/yafimski/ifc-js-course#readme",
+  "keywords": []
+}
