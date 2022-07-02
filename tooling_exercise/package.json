@@ -1,0 +1,21 @@
+{
+  "name": "tooling_exercise",
+  "version": "0.0.1",
+  "description": "Example project for dynamic IFC.js Viewer",
+  "main": "model-list.js",
+  "scripts": {
+    "build": "rollup -c",
+    "watch": "rollup -c -w"
+  },
+  "keywords": [],
+  "author": "Yafim Simanovsky",
+  "license": "MIT",
+  "dependencies": {
+    "three": "^0.142.0",
+    "web-ifc-viewer": "^1.0.206"
+  },
+  "devDependencies": {
+    "@rollup/plugin-node-resolve": "^13.3.0",
+    "rollup": "^2.75.7"
+  }
+}
