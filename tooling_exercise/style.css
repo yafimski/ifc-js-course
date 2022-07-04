@@ -177,9 +177,17 @@ iframe {
   .simple-card-container {
         display: flex;
         justify-content: center;
-        position: absolute;
+        position: relative;
         width: 100%;
   }
+
+  .simple-card-container-bottom {
+    display: flex;
+    justify-content: center;
+    position: relative;
+    width: 100%;
+    bottom: 0px;
+}
 
   /* From uiverse.io by @adamgiebl */
 .simple-card {
@@ -192,3 +200,8 @@ iframe {
     box-shadow: var(--normal-shadow);
     backdrop-filter: var(--blur-filter);
    }
+
+#viewer-container {
+    display: flex;
+    height: 80vh;
+}
