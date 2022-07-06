@@ -121421,3 +121421,4 @@ async function loadIfc(url) {
 }
 
 loadIfc(currentProject.url);
+// loadIfc('./duplex.ifc');
