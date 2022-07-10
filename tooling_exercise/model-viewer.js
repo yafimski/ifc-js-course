@@ -19,5 +19,5 @@ async function loadIfc(url) {
 }
 
 loadIfc(currentProject.url);
-// loadIfc('./duplex.ifc');
+// loadIfc('./static/IFC/02.ifc');
 
