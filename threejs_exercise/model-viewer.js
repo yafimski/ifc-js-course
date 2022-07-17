@@ -28,7 +28,7 @@ import {
 
 import {projects} from "./projects.js";
 import CameraControls from 'camera-controls';
-import Stats from 'stats.js/src/Stats';
+import Stats from 'three/examples/jsm/libs/stats.module';
 
 // Custom Project data - Generated
 const currentUrl = window.location.href;
@@ -61,17 +61,18 @@ const material = new MeshLambertMaterial({
 });
 const geometry = new BoxGeometry();
 const edgesGeometry = new EdgesGeometry(geometry);
-var edgesMaterial = new LineBasicMaterial({color: 0x000000, linewidth: 2});
-var wireframe = new LineSegments(edgesGeometry, edgesMaterial);
+const edgesMaterial = new LineBasicMaterial({color: 0x000000, linewidth: 2});
 
-cubes = [];
+const cubes = [];
 
 for(let location of currentProjectLocations){
     const cube = new Mesh(geometry, material)
     scene.add(cube);
-    cube.add(wireframe);
-    cube.position.set(location.x, location.y, location.z);
     
+    const wireframe = new LineSegments(edgesGeometry, edgesMaterial);
+    cube.add(wireframe);
+
+    cube.position.set(location.x, location.y, location.z);
     cubes.push(cube);
 }
 
@@ -129,7 +130,7 @@ cameraControls.dollyToCursor = true;
 cameraControls.setLookAt(10, 12, 10, 0, 0, 0);
 
 const stats = new Stats();
-stats.showPanel( 2 ); // 0: fps, 1: ms, 2: mb, 3+: custom
+// stats.showPanel(2); // 0: fps, 1: ms, 2: mb, 3+: custom
 document.body.appendChild( stats.dom );
 
 // Animate Frames
@@ -140,12 +141,12 @@ function animate() {
     cameraControls.update(delta);
     renderer.render(scene, camera);
 
+    // stats.update()
     stats.end();
-
+    
     requestAnimationFrame(animate);
 
     scene.remove(cubes);
-    cubes.dispose();
     geometry.dispose();
     material.dispose();
 }
