@@ -11,11 +11,15 @@
   "author": "Yafim Simanovsky",
   "license": "MIT",
   "dependencies": {
+    "dexie": "^3.2.2",
+    "dxf-writer": "^1.17.1",
     "three": "^0.135.0",
+    "web-ifc": "^0.0.35",
     "web-ifc-three": "^0.0.118",
     "web-ifc-viewer": "^1.0.207"
   },
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^22.0.1",
     "@rollup/plugin-node-resolve": "^13.3.0",
     "rollup": "^2.77.0"
   }

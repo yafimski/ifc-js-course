@@ -5,18 +5,11 @@ import {
   GridHelper,
   PerspectiveCamera,
   Scene,
-  MeshLambertMaterial,
-  Raycaster,
-  Vector2,
   WebGLRenderer,
 } from "three";
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 import {IFCLoader} from "web-ifc-three/IFCLoader";
-import {
-  acceleratedRaycast,
-  computeBoundsTree,
-  disposeBoundsTree
-} from 'three-mesh-bvh';
+import { IFCBUILDINGSTOREY, IfcStructuralLoadLinearForce } from 'web-ifc';
 
 //Creates the Three.js scene
 const scene = new Scene();
@@ -76,100 +69,49 @@ animate();
 
 //Adjust the viewport to the size of the browser
 window.addEventListener("resize", () => {
-  (size.width = window.innerWidth), (size.height = window.innerHeight);
+  size.width = window.innerWidth;
+  size.height = window.innerHeight;
   camera.aspect = size.width / size.height;
   camera.updateProjectionMatrix();
   renderer.setSize(size.width, size.height);
 });
 
-//Sets up the IFC loading
+// LOADING
 const ifcModels = [];
-const ifcLoader = new IFCLoader();
+const loader = new IFCLoader();
+loader.load('./IFC/01.ifc', (ifcModel) => {
+  ifcModels.push(ifcModel);
+  scene.add(ifcModel);
+});
 
-async function loadIFC() {
-  const model = await ifcLoader.loadAsync("IFC/01.ifc");
+
+const input = document.getElementById('file-input');
+input.addEventListener('change', async () => {
+  const file = input.files[0];
+  const url = URL.createObjectURL(file);
+  const model = await loader.loadAsync(url);
   scene.add(model);
-  ifcModels.push(model);
-}
-
-loadIFC();
-
-// Sets up optimized picking
-ifcLoader.ifcManager.setupThreeMeshBVH(
-  computeBoundsTree,
-  disposeBoundsTree,
-  acceleratedRaycast);
-
-const raycaster = new Raycaster();
-raycaster.firstHitOnly = true;
-const mouse = new Vector2();
-
-function cast(event) {
-
-  // Computes the position of the mouse on the screen
-  const bounds = threeCanvas.getBoundingClientRect();
-
-  const x1 = event.clientX - bounds.left;
-  const x2 = bounds.right - bounds.left;
-  mouse.x = (x1 / x2) * 2 - 1;
-
-  const y1 = event.clientY - bounds.top;
-  const y2 = bounds.bottom - bounds.top;
-  mouse.y = -(y1 / y2) * 2 + 1;
-
-  // Places it on the camera pointing to the mouse
-  raycaster.setFromCamera(mouse, camera);
-
-  // Casts a ray
-  return raycaster.intersectObjects(ifcModels);
-}
-
-// Creates subset materials
-const preselectMat = new MeshLambertMaterial({
-  transparent: true,
-  opacity: 0.6,
-  color: 0xff88ff,
-  depthTest: false
+  await editFloorName();
 })
 
-const selectMat = new MeshLambertMaterial({
-  transparent: true,
-  opacity: 0.6,
-  color: 0xff00ff,
-  depthTest: false
-})
+async function editFloorName() {
+  const storiesIds = await loader.ifcManager.getAllItemsOfType(0, IFCBUILDINGSTOREY, false);
+  const firstStoryId = storiesIds[0];
+  const storey = await loader.ifcManager.getItemProperties(0, firstStoryId);
+  console.log(storey);
 
-const ifc = ifcLoader.ifcManager;
-// References to the previous selections
-const highlightModel = { id: - 1};
-const selectModel = { id: - 1};
+  const result = prompt("Introduce the new name for the storey.");
+  storey.LongName.value = result;
+  loader.ifcManager.ifcAPI.WriteLine(0, storey);
 
-function highlight(event, material, model, multiple = true) {
-  const found = cast(event)[0];
-  if (found) {
+  const data = await loader.ifcManager.ifcAPI.ExportFileAsIFC(0);
+  const blob = new Blob([data]);
+  const file = new File([blob], 'modified.ifc');
 
-      // Gets model ID
-      model.id = found.object.modelID;
-
-      // Gets Express ID
-      const index = found.faceIndex;
-      const geometry = found.object.geometry;
-      const id = ifc.getExpressId(geometry, index);
-
-      // Creates subset
-      ifcLoader.ifcManager.createSubset({
-          modelID: model.id,
-          ids: [id],
-          material: material,
-          scene: scene,
-          removePrevious: multiple
-      })
-  } else {
-      // Remove previous highlight
-      ifc.removeSubset(model.id, scene, material);
-  }
+  const link = document.createElement('a');
+  link.download = 'modified.ifc';
+  link.href = URL.createObjectURL(file);
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
 }
-
-window.onmousemove = (event) => highlight(event, preselectMat, highlightModel);
-
-window.ondblclick = (event) => highlight(event, selectMat, selectModel);
